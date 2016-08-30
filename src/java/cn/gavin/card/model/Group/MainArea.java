@@ -1,11 +1,14 @@
 package cn.gavin.card.model.Group;
 
+import cn.gavin.card.exp.EmptyCard;
 import cn.gavin.card.model.Card;
 import cn.gavin.card.model.CardStatus;
 import cn.gavin.card.model.Location;
+import cn.gavin.card.model.Mark;
 import lombok.Data;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by gluo on 8/29/2016.
@@ -23,6 +26,7 @@ public class MainArea implements Group{
     public boolean placeCardAsPositive(Card card){
         if(placeCardAsCover(card)){
             card.setStatus(CardStatus.POSITIVE);
+            card.turn();
             return true;
         }else{
             return false;
@@ -52,6 +56,7 @@ public class MainArea implements Group{
     public boolean palaceCardAsPositive(Card card, int position) {
         if(palaceCardAsCover(card, position)){
             card.setStatus(CardStatus.POSITIVE);
+            card.turn();
             return true;
         }else {
             return false;
@@ -94,11 +99,41 @@ public class MainArea implements Group{
 
     @Override
     public Card push(Card card) {
+        boolean success = false;
         if(card.getStatus() == CardStatus.COVER){
-            placeCardAsCover(card);
+            success = placeCardAsCover(card);
         }else{
-            placeCardAsPositive(card);
+            success = placeCardAsPositive(card);
         }
-        return card;
+        return success ? card : EmptyCard.emptyCard;
+    }
+
+    @Override
+    public void shuffle() {
+        //Do nothing
+    }
+
+    @Override
+    public List<Card> getMark(Mark mark) {
+        ArrayList<Card> cards = new ArrayList<Card>(6);
+        if(!first.isEmpty() && first.get(0).getMark() == mark){
+            cards.add(first.get(0));
+        }
+        if(!second.isEmpty() && second.get(0).getMark() == mark){
+            cards.add(second.get(0));
+        }
+        if(!third.isEmpty() && third.get(0).getMark() == mark){
+            cards.add(third.get(0));
+        }
+        if(!fourth.isEmpty() && fourth.get(0).getMark() == mark){
+            cards.add(fourth.get(0));
+        }
+        if(!fifth.isEmpty() && fifth.get(0).getMark() == mark){
+            cards.add(fifth.get(0));
+        }
+        if(!sixth.isEmpty() && sixth.get(0).getMark() == mark){
+            cards.add(sixth.get(0));
+        }
+        return cards;
     }
 }

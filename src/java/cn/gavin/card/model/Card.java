@@ -1,5 +1,6 @@
 package cn.gavin.card.model;
 
+import cn.gavin.card.exp.EmptyCard;
 import cn.gavin.card.manager.DuleManager;
 import cn.gavin.card.model.Group.Group;
 import cn.gavin.card.model.Group.MainArea;
@@ -21,6 +22,7 @@ public abstract class Card {
     private CardStatus status;
     private Carder owner;
     private List<Object> parameters;
+    private Mark mark;
 
     @Override
     public String toString() {
@@ -33,11 +35,33 @@ public abstract class Card {
     }
 
     public  boolean move(Group target){
+        if(currentLoc == Location.VALUE){
+            owner.setPoint(owner.getPoint() - getValue());
+        }
         currentLoc = target.getLocation();
-        target.push(this);
+        Card card = target.push(this);
         switch (currentLoc){
+            case STACK:
+                status = CardStatus.CARD_STACK;
+                break;
+            case VALUE:
+                status = CardStatus.VALUE;
+                owner.setPoint(owner.getPoint() + getValue());
+                break;
             case ABANDON:
                 status = CardStatus.ABANDON;
+                break;
+            case MAIN:
+                if(card instanceof EmptyCard){
+                    status = CardStatus.ABANDON;
+                    return false;
+                }
+                break;
+            case HAND:
+                if(card instanceof EmptyCard){
+                    status = CardStatus.ABANDON;
+                    return false;
+                }
                 break;
         }
         return true;
@@ -77,4 +101,17 @@ public abstract class Card {
 
     public abstract boolean invoke();
 
+    public void turn(){
+        owner.setPoint(owner.getPoint() - getCost());
+        owner.setAtk(owner.getAtk() + getAtk());
+        owner.setDef(owner.getDef() + getDefend());
+        invoke();
+        setStatus(CardStatus.POSITIVE);
+    }
+
+    public void cover(){
+        owner.setAtk(owner.getAtk() - getAtk());
+        owner.setDef(owner.getDef() - getDefend());
+        setStatus(CardStatus.COVER);
+    }
 }

@@ -18,7 +18,7 @@ public enum Location {
 
     public Card pop(){
         if(stack.isEmpty()){
-            return new EmptyCard();
+            return EmptyCard.emptyCard;
         }
         return stack.pop();
     }
