@@ -1,6 +1,5 @@
 package cn.gavin.card.model.Group;
 
-import cn.gavin.card.manager.GroupManager;
 import cn.gavin.card.model.Card;
 import cn.gavin.card.model.Location;
 import cn.gavin.card.model.Mark;

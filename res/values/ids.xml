@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="check_cribber" type="id">正在检测数据是否异常...</item>
+</resources>

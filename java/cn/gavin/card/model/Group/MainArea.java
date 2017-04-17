@@ -5,7 +5,6 @@ import cn.gavin.card.model.Card;
 import cn.gavin.card.model.CardStatus;
 import cn.gavin.card.model.Location;
 import cn.gavin.card.model.Mark;
-import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +12,6 @@ import java.util.List;
 /**
  * Created by gluo on 8/29/2016.
  */
-@Data
 public class MainArea implements Group{
     private static final Location location = Location.MAIN;
     private ArrayList<Card> first = new ArrayList<Card>(2);
@@ -135,5 +133,13 @@ public class MainArea implements Group{
             cards.add(sixth.get(0));
         }
         return cards;
+    }
+
+    public Card pop(){
+        return EmptyCard.emptyCard;
+    }
+
+    public int size(){
+        return 5;
     }
 }
