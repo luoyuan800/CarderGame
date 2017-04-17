@@ -3,7 +3,7 @@
  * Each card type should have a card class
  * Each card instance for each card id
  * Each card should have different card id event they are same card
- * such id = 08(group)08(produce NO.)13(card type)001(card id)
+ * such id = 08(group)08(produce NO.)4(type length)0013(card type)0001(card id)
  */
 package cn.gavin.card.model;
 
@@ -14,6 +14,9 @@ import cn.gavin.card.model.Group.TenchType;
 import cn.gavin.card.model.carder.Carder;
 import cn.gavin.card.model.effect.Effect;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -46,7 +49,10 @@ public abstract class Card {
     protected TenchType tenchType;
 
     protected Card(){
-
+        immuneEffect = new HashSet<>();
+        effects = new HashSet<>();
+        parameters = new ArrayList<>();
+        templeProperties = new HashMap<>();
     }
 
     @Override
@@ -300,5 +306,12 @@ public abstract class Card {
             return ((T) value);
         }
         return def;
+    }
+
+    public void setId(String id){
+        this.id = id;
+    }
+    public void setTenchType(TenchType tt){
+        this.tenchType = tt;
     }
 }
