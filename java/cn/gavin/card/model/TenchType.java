@@ -1,4 +1,4 @@
-package cn.gavin.card.model.Group;
+package cn.gavin.card.model;
 
 /**
  * 卡片制作工艺，即是卡片的牌面效果

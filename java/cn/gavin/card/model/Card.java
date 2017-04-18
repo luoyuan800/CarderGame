@@ -3,14 +3,13 @@
  * Each card type should have a card class
  * Each card instance for each card id
  * Each card should have different card id event they are same card
- * such id = 08(group)08(produce NO.)4(type length)0013(card type)0001(card id)
+ * such id = 3(group length)4(type length)008(group)08(produce NO.)0013(card type)0001(card id)
  */
 package cn.gavin.card.model;
 
 import cn.gavin.card.exp.EmptyCard;
 import cn.gavin.card.model.Group.Group;
 import cn.gavin.card.model.Group.MainArea;
-import cn.gavin.card.model.Group.TenchType;
 import cn.gavin.card.model.carder.Carder;
 import cn.gavin.card.model.effect.Effect;
 
