@@ -28,6 +28,10 @@ public class CardBuilder {
         return card;
     }
 
+    public Card buildCard(String id) {
+        return buildCard(id, dbHelper.queryCardTT(id));
+    }
+
     private Class getClass(String typeId){
         return dbHelper.queryClass(typeId);
     }

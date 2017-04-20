@@ -3,6 +3,7 @@ package cn.gavin.card.db;
 import android.content.Context;
 import android.database.Cursor;
 import cn.gavin.card.cards.CardClassLoader;
+import cn.gavin.card.model.TenchType;
 import net.sqlcipher.database.SQLiteDatabase;
 
 import java.io.File;
@@ -33,6 +34,19 @@ public class DbHelper{
         initializeSQLCipher(context);
         loader = new CardClassLoader(new URL[0], this.getClass().getClassLoader());
     }
+
+    public boolean isNeedToUpdate(String id, String version) {
+        return false;
+    }
+
+    public TenchType queryCardTT(String id) {
+        return null;
+    }
+
+    public void deleteCard(String id) {
+
+    }
+
     private void initializeSQLCipher(Context context) {
         SQLiteDatabase.loadLibs(context);
         File databaseFile = context.getFileStreamPath("demo.db");
@@ -84,7 +98,7 @@ public class DbHelper{
 
     }
 
-    public void insertType(String t_id, String t_class, String t_file){
+    public void insertType(String t_id, String t_class, String t_file, String t_group, String t_version){
 
     }
 

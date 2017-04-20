@@ -23,19 +23,20 @@ import java.util.Set;
 public abstract class Card {
     //D = description
     //Below properties define by subclass, and could not be cover.
-    protected String name;
-    protected String level;
-    protected String mainD;
-    protected String secD;
-    protected String covD;
-    protected int value;
-    protected int cost;
-    protected int atk;
-    protected int defend;
-    protected int invokeLimit;//Each game invoke count
-    private int totalLimit;//The max number in one card group
-    protected Set<Effect> immuneEffect;
-    protected Set<Effect> effects;
+    protected static String name;
+    protected static String level;
+    protected static String mainD;
+    protected static String secD;
+    protected static String covD;
+    protected static int value;
+    protected static int cost;
+    protected static int atk;
+    protected static int defend;
+    protected static int invokeLimit;//Each game invoke count
+    private static int totalLimit;//The max number in one card group
+    protected static Set<Effect> immuneEffect;
+    protected static Set<Effect> effects;
+    protected static String img;
     //Below properties are set in runtime
     private  Location currentLoc;
     private CardStatus status;
@@ -312,5 +313,13 @@ public abstract class Card {
     }
     public void setTenchType(TenchType tt){
         this.tenchType = tt;
+    }
+
+    public String getImg() {
+        return img;
+    }
+
+    public void setImg(String img) {
+        this.img = img;
     }
 }
