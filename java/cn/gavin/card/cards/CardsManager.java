@@ -3,7 +3,7 @@ package cn.gavin.card.cards;
 import android.content.Context;
 import cn.gavin.card.db.DbHelper;
 import cn.gavin.card.model.Card;
-import cn.gavin.card.model.Group.CardStack;
+import cn.gavin.card.model.group.CardStack;
 import cn.gavin.card.utils.FileUtils;
 
 import java.io.BufferedReader;

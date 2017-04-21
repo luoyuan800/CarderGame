@@ -1,8 +1,9 @@
-package cn.gavin.card.model.Group;
+package cn.gavin.card.model.group;
 
 import cn.gavin.card.model.Card;
 import cn.gavin.card.model.Location;
 import cn.gavin.card.model.Mark;
+import cn.gavin.card.model.carder.Carder;
 
 import java.util.List;
 
@@ -18,4 +19,6 @@ public interface Group {
     Card pop();
 
     int size();
+    Carder getOwner();
+    void setOwner(Carder owner);
 }

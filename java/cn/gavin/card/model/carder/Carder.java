@@ -1,13 +1,18 @@
 package cn.gavin.card.model.carder;
 
 
-import cn.gavin.card.model.Group.AbandonGroup;
-import cn.gavin.card.model.Group.CardStack;
-import cn.gavin.card.model.Group.HandCards;
-import cn.gavin.card.model.Group.MainArea;
-import cn.gavin.card.model.Group.TempleGroup;
-import cn.gavin.card.model.Group.ValueGroup;
-import cn.gavin.card.model.Process;
+import cn.gavin.card.model.Card;
+import cn.gavin.card.model.group.AbandonGroup;
+import cn.gavin.card.model.group.CardStack;
+import cn.gavin.card.model.group.HandCards;
+import cn.gavin.card.model.group.MainArea;
+import cn.gavin.card.model.group.TempleGroup;
+import cn.gavin.card.model.group.ValueGroup;
+import cn.gavin.card.model.Location;
+
+import java.util.ArrayList;
+import java.util.EmptyStackException;
+import java.util.List;
 
 /**
  * Created by gluo on 8/29/2016.
@@ -95,4 +100,26 @@ public class Carder {
         this.stack = stack;
     }
 
+    public List<Card> drawCard(Location location, int num) {
+        List<Card> cards = new ArrayList<>(num);
+        try {
+            switch (location) {
+                case STACK:
+                    while (num-- > 0) {
+                        Card card = stack.pop();
+                        if(card!=null) {
+                            cards.add(card);
+                            card.move(hand);
+                        }else{
+                            break;
+                        }
+                    }
+                    break;
+
+            }
+        }catch (EmptyStackException e){
+
+        }
+        return cards;
+    }
 }

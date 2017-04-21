@@ -8,8 +8,9 @@
 package cn.gavin.card.model;
 
 import cn.gavin.card.exp.EmptyCard;
-import cn.gavin.card.model.Group.Group;
-import cn.gavin.card.model.Group.MainArea;
+import cn.gavin.card.model.effect.CoverEffect;
+import cn.gavin.card.model.group.Group;
+import cn.gavin.card.model.group.MainArea;
 import cn.gavin.card.model.carder.Carder;
 import cn.gavin.card.model.effect.Effect;
 
@@ -34,11 +35,9 @@ public abstract class Card {
     protected static int defend;
     protected static int invokeLimit;//Each game invoke count
     private static int totalLimit;//The max number in one card group
-    protected static Set<Effect> immuneEffect;
-    protected static Set<Effect> effects;
     protected static String img;
     //Below properties are set in runtime
-    private  Location currentLoc;
+    private Group currentGroup;
     private CardStatus status;
     private Carder owner;
     private List<Object> parameters;
@@ -49,8 +48,6 @@ public abstract class Card {
     protected TenchType tenchType;
 
     protected Card(){
-        immuneEffect = new HashSet<>();
-        effects = new HashSet<>();
         parameters = new ArrayList<>();
         templeProperties = new HashMap<>();
     }
@@ -66,8 +63,11 @@ public abstract class Card {
     }
 
     public  boolean move(Group target){
+        Carder owner = target.getOwner();
+        Location currentLoc = currentGroup.getLocation();
         if(currentLoc == Location.VALUE){
-            owner.setPoint(owner.getPoint() - getValue());
+            Carder currentOwner = currentGroup.getOwner();
+            currentOwner.setPoint(owner.getPoint() - getValue());
         }
         currentLoc = target.getLocation();
         Card card = target.push(this);
@@ -112,7 +112,7 @@ public abstract class Card {
             }
         }
         if(isSuccess){
-            currentLoc = group.getLocation();
+            currentGroup = group;
         }
         return isSuccess;
     }
@@ -124,20 +124,15 @@ public abstract class Card {
         return false;
     }
 
-    public boolean isContainEffect(Effect e){
-        if(getEffects() == null || getEffects().isEmpty()){
-            return false;
-        }
-        return getEffects().contains(e);
-    }
-
-    public abstract boolean invoke();
+    public abstract boolean invoke(Map<String, Object> parameters);
 
     public void turn(){
         owner.setPoint(owner.getPoint() - getCost());
         owner.setAtk(owner.getAtk() + getAtk());
         owner.setDef(owner.getDef() + getDefend());
-        invoke();
+        if(this instanceof CoverEffect){
+
+        }
         setStatus(CardStatus.POSITIVE);
     }
 
@@ -232,30 +227,6 @@ public abstract class Card {
         return totalLimit;
     }
 
-    public Location getCurrentLoc() {
-        return currentLoc;
-    }
-
-    public void setCurrentLoc(Location currentLoc) {
-        this.currentLoc = currentLoc;
-    }
-
-    public Set<Effect> getImmuneEffect() {
-        return getTemplePropertiesWithDefault("immuneEffect", immuneEffect);
-    }
-
-    public void setImmuneEffect(Set<Effect> immuneEffect) {
-        templeProperties.put("immuneEffect", immuneEffect);
-    }
-
-    public Set<Effect> getEffects() {
-        return getTemplePropertiesWithDefault("effects", effects);
-    }
-
-    public void setEffects(Set<Effect> effects) {
-        templeProperties.put("effects", effects);
-    }
-
     public CardStatus getStatus() {
         return status;
     }
@@ -321,5 +292,13 @@ public abstract class Card {
 
     public void setImg(String img) {
         this.img = img;
+    }
+
+    public Group getCurrentGroup() {
+        return currentGroup;
+    }
+
+    public void setCurrentGroup(Group currentGroup) {
+        this.currentGroup = currentGroup;
     }
 }

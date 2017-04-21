@@ -1,9 +1,10 @@
-package cn.gavin.card.model.Group;
+package cn.gavin.card.model.group;
 
 import cn.gavin.card.exp.EmptyCard;
 import cn.gavin.card.model.Card;
 import cn.gavin.card.model.Location;
 import cn.gavin.card.model.Mark;
+import cn.gavin.card.model.carder.Carder;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,9 +13,18 @@ import java.util.List;
 /**
  * Created by gluo on 8/29/2016.
  */
-public class TempleGroup extends ArrayList<Card> implements Group {
+public class TempleGroup extends ArrayList<Card> implements cn.gavin.card.model.group.Group {
     private Location location;
+    private Carder owner;
 
+    public Carder getOwner() {
+        return owner;
+    }
+
+    @Override
+    public void setOwner(Carder owner) {
+        this.owner = owner;
+    }
     @Override
     public Card push(Card card) {
         add(card);

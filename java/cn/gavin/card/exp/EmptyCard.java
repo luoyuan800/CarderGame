@@ -3,6 +3,8 @@ package cn.gavin.card.exp;
 
 import cn.gavin.card.model.Card;
 
+import java.util.Map;
+
 /**
  * Created by gluo on 8/29/2016.
  */
@@ -12,7 +14,7 @@ public class EmptyCard extends Card {
 
     }
     @Override
-    public boolean invoke() {
+    public boolean invoke(Map<String, Object> parameters) {
         return false;
     }
 }
