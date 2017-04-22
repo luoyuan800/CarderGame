@@ -65,7 +65,7 @@ public abstract class Card {
         Location currentLoc = currentGroup.getLocation();
         if (currentLoc == Location.VALUE) {
             Carder currentOwner = currentGroup.getOwner();
-            currentOwner.setPoint(owner.getPoint() - getValue());
+            currentOwner.setPoint(owner.getPoint() - getCost());
         }
         currentLoc = target.getLocation();
         Card card = target.push(this);
@@ -75,7 +75,7 @@ public abstract class Card {
                 break;
             case VALUE:
                 status = CardStatus.VALUE;
-                owner.setPoint(owner.getPoint() + getValue());
+                owner.setPoint(owner.getPoint() + getCost());
                 break;
             case ABANDON:
                 status = CardStatus.ABANDON;

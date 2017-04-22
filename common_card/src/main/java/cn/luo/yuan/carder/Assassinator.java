@@ -4,12 +4,22 @@ import cn.gavin.card.model.Card;
 import cn.gavin.card.model.CardStatus;
 import cn.gavin.card.model.carder.Carder;
 import cn.gavin.card.model.effect.AfterDrawEffect;
+import cn.gavin.card.model.effect.CoverEffect;
 
 import java.util.List;
 import java.util.Map;
 
-public class Assassinator extends Card implements AfterDrawEffect {
+public class Assassinator extends Card implements AfterDrawEffect,CoverEffect {
 
+    public Assassinator(){
+        name = "暗杀者";
+        level = "3";
+        value = 120;
+        cost = 120;
+        atk = 170;
+        defend = 0;
+
+    }
     @Override
     public boolean invokeAsMain(Map<String, Object> parameters) {
         int cost = getCost();
@@ -47,5 +57,19 @@ public class Assassinator extends Card implements AfterDrawEffect {
             }
         }
         return false;
+    }
+
+    @Override
+    public void invokeWhileTurn(Map<String, Object> para) {
+        //TODO Show choose view
+        Card choose = null;
+        choose.destroy();
+        //TODO Show conform dialog
+        boolean conform = true;
+        if(conform){
+            getController().setPoint(getController().getPoint() - 90);
+            Carder carder = (Carder)para.get("target");
+            carder.getStack().pop().destroy();
+        }
     }
 }
