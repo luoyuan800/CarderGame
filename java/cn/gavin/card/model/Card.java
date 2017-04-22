@@ -8,18 +8,15 @@
 package cn.gavin.card.model;
 
 import cn.gavin.card.exp.EmptyCard;
+import cn.gavin.card.model.carder.Carder;
 import cn.gavin.card.model.effect.CoverEffect;
 import cn.gavin.card.model.group.Group;
 import cn.gavin.card.model.group.MainArea;
-import cn.gavin.card.model.carder.Carder;
-import cn.gavin.card.model.effect.Effect;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public abstract class Card {
     //D = description
@@ -34,8 +31,11 @@ public abstract class Card {
     protected static int atk;
     protected static int defend;
     protected static int invokeLimit;//Each game invoke count
-    private static int totalLimit;//The max number in one card group
     protected static String img;
+    private static int totalLimit;//The max number in one card group
+    //Below properties read from database;
+    protected String id;
+    protected TenchType tenchType;
     //Below properties are set in runtime
     private Group currentGroup;
     private CardStatus status;
@@ -43,11 +43,9 @@ public abstract class Card {
     private List<Object> parameters;
     private Mark mark;
     private Map<String, Object> templeProperties;//Properties can be change while running,so we will save those dynamic value into here
-    //Below properties read from database;
-    protected String id;
-    protected TenchType tenchType;
+    private Carder controller;
 
-    protected Card(){
+    protected Card() {
         parameters = new ArrayList<>();
         templeProperties = new HashMap<>();
     }
@@ -62,16 +60,16 @@ public abstract class Card {
         return sb.toString();
     }
 
-    public  boolean move(Group target){
+    public boolean move(Group target) {
         Carder owner = target.getOwner();
         Location currentLoc = currentGroup.getLocation();
-        if(currentLoc == Location.VALUE){
+        if (currentLoc == Location.VALUE) {
             Carder currentOwner = currentGroup.getOwner();
             currentOwner.setPoint(owner.getPoint() - getValue());
         }
         currentLoc = target.getLocation();
         Card card = target.push(this);
-        switch (currentLoc){
+        switch (currentLoc) {
             case STACK:
                 status = CardStatus.CARD_STACK;
                 break;
@@ -83,13 +81,13 @@ public abstract class Card {
                 status = CardStatus.ABANDON;
                 break;
             case MAIN:
-                if(card instanceof EmptyCard){
+                if (card instanceof EmptyCard) {
                     status = CardStatus.ABANDON;
                     return false;
                 }
                 break;
             case HAND:
-                if(card instanceof EmptyCard){
+                if (card instanceof EmptyCard) {
                     status = CardStatus.ABANDON;
                     return false;
                 }
@@ -98,52 +96,69 @@ public abstract class Card {
         return true;
     }
 
-    public boolean move(MainArea group, int index){
+    public boolean move(MainArea group, int index) {
         boolean isSuccess = false;
-        if(status == CardStatus.COVER){
+        if (status == CardStatus.COVER) {
             isSuccess = group.palaceCardAsCover(this, index);
-            if(isSuccess){
+            if (isSuccess) {
                 status = CardStatus.COVER;
             }
-        }else{
-            isSuccess = group.palaceCardAsPositive(this,index);
-            if(isSuccess){
+        } else {
+            isSuccess = group.palaceCardAsPositive(this, index);
+            if (isSuccess) {
                 status = CardStatus.POSITIVE;
             }
         }
-        if(isSuccess){
+        if (isSuccess) {
             currentGroup = group;
         }
         return isSuccess;
     }
 
-    public boolean destroy(){
+    public boolean destroy() {
         //Some action
         /*Group ababdon = DuleManager.duleManager.getGroupManager(owner).getGroup(Location.ABANDON);
         return move(ababdon);*/
         return false;
     }
 
-    public abstract boolean invoke(Map<String, Object> parameters);
+    public boolean isMainInvokeAble(){
+        return true;
+    }
 
-    public void turn(){
+    public boolean isSecondInvokeAble(){
+        return true;
+    }
+
+    public boolean invokeAsMain(Map<String, Object> parameters){
+        if(isMainInvokeAble()) {
+            getController().setPoint(getController().getPoint() - getCost());
+            return getController().getMain().placeCardAsPositive(this);
+        }else{
+            return false;
+        }
+    }
+
+    public abstract boolean invokeAsSecond(Map<String, Object> parameters);
+
+    public void turn(Map<String, Object> para) {
         owner.setPoint(owner.getPoint() - getCost());
         owner.setAtk(owner.getAtk() + getAtk());
         owner.setDef(owner.getDef() + getDefend());
-        if(this instanceof CoverEffect){
-
+        if (this instanceof CoverEffect) {
+            ((CoverEffect)this).invokeWhileTurn(para);
         }
         setStatus(CardStatus.POSITIVE);
     }
 
-    public void cover(){
+    public void cover() {
         owner.setAtk(owner.getAtk() - getAtk());
         owner.setDef(owner.getDef() - getDefend());
         setStatus(CardStatus.COVER);
     }
 
     public String getName() {
-       return getTemplePropertiesWithDefault("name", name);
+        return getTemplePropertiesWithDefault("name", name);
     }
 
     public void setName(String name) {
@@ -151,7 +166,7 @@ public abstract class Card {
     }
 
     public String getLevel() {
-       return getTemplePropertiesWithDefault("level", level);
+        return getTemplePropertiesWithDefault("level", level);
     }
 
     public void setLevel(String level) {
@@ -186,6 +201,10 @@ public abstract class Card {
         return id;
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public int getValue() {
         return getTemplePropertiesWithDefault("value", value);
 
@@ -216,7 +235,7 @@ public abstract class Card {
     }
 
     public void setDefend(int defend) {
-        templeProperties.put("defend",defend);
+        templeProperties.put("defend", defend);
     }
 
     public int getInvokeLimit() {
@@ -263,6 +282,10 @@ public abstract class Card {
         return tenchType;
     }
 
+    public void setTenchType(TenchType tt) {
+        this.tenchType = tt;
+    }
+
     public Map<String, Object> getTempleProperties() {
         return templeProperties;
     }
@@ -271,19 +294,12 @@ public abstract class Card {
         this.templeProperties = templeProperties;
     }
 
-    public <T> T getTemplePropertiesWithDefault(String pro, T def){
+    public <T> T getTemplePropertiesWithDefault(String pro, T def) {
         Object value = templeProperties.get(pro);
-        if(value!=null){
+        if (value != null) {
             return ((T) value);
         }
         return def;
-    }
-
-    public void setId(String id){
-        this.id = id;
-    }
-    public void setTenchType(TenchType tt){
-        this.tenchType = tt;
     }
 
     public String getImg() {
@@ -300,5 +316,13 @@ public abstract class Card {
 
     public void setCurrentGroup(Group currentGroup) {
         this.currentGroup = currentGroup;
+    }
+
+    public Carder getController() {
+        return controller;
+    }
+
+    public void setController(Carder controller) {
+        this.controller = controller;
     }
 }

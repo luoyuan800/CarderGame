@@ -36,16 +36,20 @@ public class MainArea implements Group, Iterable<Card> {
     }
 
     public boolean placeCardAsPositive(Card card) {
-        if (placeCardAsCover(card)) {
-            card.setStatus(CardStatus.POSITIVE);
-            card.turn();
-            return true;
-        } else {
-            return false;
-        }
+       if(place(card)){
+           card.setStatus(CardStatus.POSITIVE);
+           return true;
+       }
+       return false;
     }
 
     public boolean placeCardAsCover(Card card) {
+        if (place(card)) return false;
+        card.setStatus(CardStatus.COVER);
+        return true;
+    }
+
+    private boolean place(Card card) {
         if (first.isEmpty()) {
             first.add(card);
         } else if (second.isEmpty()) {
@@ -59,10 +63,9 @@ public class MainArea implements Group, Iterable<Card> {
         } else if (sixth.isEmpty()) {
             sixth.add(card);
         } else {
-            return false;
+            return true;
         }
-        card.setStatus(CardStatus.COVER);
-        return true;
+        return false;
     }
 
     public boolean palaceCardAsPositive(Card card, int position) {
